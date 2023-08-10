@@ -18,8 +18,8 @@
 #define ENCODER_BTN 3
 
 // Create instances of AccelStepper for both motors
-AccelStepper solStepper(1, STP_PIN_SOL, DIR_PIN_SOL);
-AccelStepper watStepper(1, STP_PIN_H2O, DIR_PIN_H2O);
+AccelStepper stepper1(1, STP_PIN_SOL, DIR_PIN_SOL);
+AccelStepper stepper2(1, STP_PIN_H2O, DIR_PIN_H2O);
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 Encoder myEnc(2, 4);
@@ -42,8 +42,8 @@ void setup() {
   Serial.begin(115200);
 
   // initialize steppers
-  solStepper.setMaxSpeed(200);
-  watStepper.setMaxSpeed(200);
+  stepper1.setMaxSpeed(200);
+  stepper2.setMaxSpeed(200);
 
   pinMode(EN_PIN_SOL, OUTPUT);
   pinMode(EN_PIN_H2O, OUTPUT);
@@ -76,9 +76,9 @@ void drawDisplay() {
   display.setCursor(10, 10);
   display.println("Time: " + (String)(params[0] / 60) + ":" + (String)(params[0] % 60));
   display.setCursor(10, 20);
-  display.println("Water: " + (String)params[1]);
+  display.println("Pump 1: " + (String)params[1]);
   display.setCursor(10, 30);
-  display.println("Solution: " + (String)params[2]);
+  display.println("Pump 2: " + (String)params[2]);
   display.setCursor(10, 40);
   display.println(!start ? "Start" : "Stop");
   display.display();
@@ -171,15 +171,10 @@ void loop() {
       break;
     }
 
-    watStepper.setSpeed(2 * params[1]);
-    solStepper.setSpeed(2 * params[2]);
+    stepper2.setSpeed(2 * params[1]);
+    stepper1.setSpeed(2 * params[2]);
 
-    watStepper.runSpeed();
-    solStepper.runSpeed();
+    stepper2.runSpeed();
+    stepper1.runSpeed();
   }
-
-
-
-  // Move both motors at different speeds
-  //
 }
